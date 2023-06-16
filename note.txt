@@ -1,0 +1,10 @@
+order flow :
+    ordered = new order
+    paid = order paid
+    progress = order in progress
+    sended = Preview sended need costumer feedback
+    revision = new revision
+    accept = revision accpeted
+    done = order done
+    cancelled = order cancelled
+    failed = order failed
