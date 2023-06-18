@@ -176,7 +176,7 @@ export const updateStatus = async (req, res) => {
 export const login = async (req, res) => {
   validate(req.body, {
     username: { required: true, type: String },
-    password: { required: true, type: String, min: 8, max: 12 },
+    password: { required: true, type: String },
   });
   const user = await User.findOne({ username: req.body.username }).orFail(
     new CustomError("Invalid username or password", 422)
