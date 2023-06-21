@@ -531,8 +531,13 @@ export const updateProgress = async (req, res) => {
     _id: req.params.order_id,
   });
 
+  const currentDate = new Date();
+  const deadlineDate = new Date();
+  deadlineDate.setDate(currentDate.getDate() + 40);
+
   orderFind.orderStatus = "progress";
   orderFind.status.progress = new Date();
+  orderFind.deadline = deadlineDate;
   await orderFind.save();
   res.json(successResponse(orderFind));
 };

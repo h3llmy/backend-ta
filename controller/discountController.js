@@ -68,7 +68,7 @@ export const list = async (req, res) => {
       ],
     };
   }
-  if (req.query.isActive.toLowerCase() === "true") {
+  if (req.query?.isActive?.toLowerCase() === "true") {
     filters = {
       ...filters,
       $and: [
