@@ -13,6 +13,7 @@ import {
   updateRevision,
   updateAccept,
   updateDone,
+  updateProgress,
 } from "../../controller/orderController.js";
 import { isAdmin, protect } from "../../middleware/authMiddleware.js";
 
@@ -25,6 +26,7 @@ router.get("/list/peryear", isAdmin, listPerYear);
 router.get("/total", total);
 router.get("/detail/:order_id", protect, detail);
 router.post("/create-report", isAdmin, createReport);
+router.put("/update/progress/:order_id", isAdmin, updateProgress);
 router.put("/update/revision/:order_id", protect, updateRevision);
 router.put("/update/preview/:order_id", isAdmin, updatePreview);
 router.put("/update/accept/:order_id", protect, updateAccept);

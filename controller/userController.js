@@ -7,21 +7,18 @@ import { paginations } from "../vendor/mongoosePlugin/pagination.js";
 
 export const detail = async (req, res) => {
   let userId;
-  let selected;
   if (req.auth.status === "admin") {
     validate(req.query, {
       userId: { required: true, type: String },
     });
     userId = req.query.userId;
-    selected = "-password -collections";
   } else {
     userId = req.auth._id;
-    selected = "-password";
   }
   const userFind = await User.findOne({
     _id: userId,
   })
-    .select(selected)
+    .select("-password")
     .populate("collections")
     .orFail(new CustomError("User not found", 404));
 
