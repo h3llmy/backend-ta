@@ -21,7 +21,7 @@ export const detail = async (req, res) => {
   const userFind = await User.findOne({
     _id: userId,
   })
-    .select("-password")
+    .select(selected)
     .populate("collections")
     .orFail(new CustomError("User not found", 404));
 

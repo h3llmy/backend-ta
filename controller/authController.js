@@ -9,6 +9,7 @@ import {
 import User from "../model/userModel.js";
 import validate from "../vendor/validator.js";
 import CustomError from "../vendor/customError.js";
+import generateOTP from "../vendor/generateOTP.js";
 
 export const register = async (req, res) => {
   validate(req.body, {
@@ -17,9 +18,7 @@ export const register = async (req, res) => {
     password: { required: true, type: String, min: 8, max: 12 },
     confirmPassword: { required: true, type: String, min: 8, max: 12 },
   });
-  const randomOtp = (Math.floor(Math.random() * 100000) + 100000)
-    .toString()
-    .substring(1);
+  const randomOtp = generateOTP();
 
   if (req.body.password != req.body.confirmPassword) {
     throw new CustomError("password not match", 422);
@@ -69,9 +68,7 @@ export const register = async (req, res) => {
 };
 
 export const resendOtp = async (req, res) => {
-  const randomOtp = (Math.floor(Math.random() * 100000) + 100000)
-    .toString()
-    .substring(1);
+  const randomOtp = generateOTP();
   const token = decodeToken(req.params.token);
   if (token.type != "register") {
     throw new CustomError("invalid token", 422);

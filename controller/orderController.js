@@ -101,7 +101,7 @@ export const notification = async () => {
 
     const ordersFind = await Order.find({
       orderStatus: {
-        $in: ["progress", "revision"],
+        $in: ["progress"],
       },
       deadline: {
         $lt: today,
