@@ -54,7 +54,10 @@ export const uploadFile = (file, filters) => {
 
     const mime = file.mimetype.split("/")[0];
     const fileName = Date.now() + "-" + file.name;
-    const filePath = process.env.BASE_URL + `${mime}/` + fileName;
+    const filePath =
+      process.env.BASE_URL +
+      `${filters?.isPrivate ? "private" : "public"}/${mime}/` +
+      fileName;
 
     return {
       filePath: filePath,
@@ -71,11 +74,11 @@ export const uploadFile = (file, filters) => {
 
 export const saveFile = (file) => {
   try {
-    const directory = `public/${file.mimeType}`;
-    if (!fs.existsSync(directory)) {
+    const directory = `${file.filePath.split("/")[3]}/${file.mimeType}`;
+    if (!fs.existsSync(`storage/${directory}`)) {
       fs.mkdirSync(directory, { recursive: true });
     }
-    file.file.mv(`${directory}/${file.fileName}`);
+    file.file.mv(`storage/${directory}/${file.fileName}`);
   } catch (error) {
     throw new Error(error);
   }
@@ -84,18 +87,19 @@ export const saveFile = (file) => {
 export const deleteFile = (file) => {
   try {
     const path =
-      "'current', ../../public/" +
-      file.split("/")[3] +
+      "'current', ../../storage/" +
+      `/${file.split("/")[3]}/` +
+      file.split("/")[4] +
       "/" +
-      file.split("/")[4];
+      file.split("/")[5];
     if (fs.existsSync(path)) {
       fs.unlink(path, (err) => {
         if (err) throw err;
-        return `file ${file.split("/")[4]} deleted`;
+        return `file ${file.split("/")[5]} deleted`;
       });
     } else {
-      return `file ${file.split("/")[4]} not found in : ${
-        "public/" + file.split("/")[3] + "/" + file.split("/")[4]
+      return `file ${file.split("/")[5]} not found in : ${
+        "storage/public/" + file.split("/")[4] + "/" + file.split("/")[5]
       }`;
     }
   } catch (error) {

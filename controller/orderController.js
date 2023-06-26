@@ -417,7 +417,12 @@ export const updatePreview = async (req, res) => {
     throw new CustomError(`order already ${orderFind.orderStatus}`);
   }
 
-  const file = uploadFile(req.files.productPreview);
+  let file;
+  if (Number(orderFind.maxRevision) - Number(orderFind.totalRevision) <= 0) {
+    file = uploadFile(req.files.productPreview, { isPrivate: true });
+  } else {
+    file = uploadFile(req.files.productPreview);
+  }
 
   if (orderFind.productPreview) {
     deleteFile(orderFind.productPreview);
@@ -471,7 +476,7 @@ export const updateDone = async (req, res) => {
     orderFind.orderStatus = "done";
     orderFind.status.done = new Date();
 
-    const file = uploadFile(req.files.proudctFile);
+    const file = uploadFile(req.files.proudctFile, { isPrivate: true });
 
     const categoryFind = await Categories.findOne({
       _id: orderFind.productCategoryId,

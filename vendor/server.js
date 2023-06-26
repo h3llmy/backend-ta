@@ -5,11 +5,12 @@ import helmet from "helmet";
 import corsMiddleware from "../middleware/corsMiddleware.js";
 import { errorHanddlerMiddleware } from "../middleware/errorHanddlerMiddleware.js";
 import compression from "compression";
-import { auth } from "../middleware/authMiddleware.js";
+import { auth, protect } from "../middleware/authMiddleware.js";
 import rateLimiterMiddleware from "../middleware/rateLimiterMiddleware.js";
 import ExpressMongoSanitize from "express-mongo-sanitize";
 import morgan from "morgan";
 import fs from "fs";
+import { privateFile, publicFile } from "../middleware/fileAccessMiddleware.js";
 
 const app = express();
 
@@ -29,15 +30,13 @@ app.use(fileUpload(), (req, res, next) => {
   }
   next();
 });
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
 app.use(express.json());
-app.use(express.static("public"));
+app.use(auth);
+app.get("/public/:mimeType/:fileName", publicFile);
+app.get("/private/:mimeType/:fileName", privateFile);
+// app.use(express.static("public"));
 app.use(ExpressMongoSanitize());
 app.use(corsMiddleware);
-app.use(auth);
 app.use(rateLimiterMiddleware);
 
 app.use("/api/v1", router);
