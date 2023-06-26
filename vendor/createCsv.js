@@ -7,12 +7,14 @@ export default (fileName, data) => {
     const csvData = Object.values(data)
       .map((val) => val)
       .join("; ");
-    if (!fs.existsSync(`public/text`)) {
-      fs.mkdirSync(`public/text`, { recursive: true });
+    if (!fs.existsSync(`storage/private/text`)) {
+      fs.mkdirSync(`storage/private/text`, { recursive: true });
     }
-    if (fs.existsSync(`'current', ../../public/text/${fileName}.csv`)) {
+    if (
+      fs.existsSync(`'current', ../../storage/private/text/${fileName}.csv`)
+    ) {
       fs.appendFileSync(
-        `'current', ../../public/text/${fileName}.csv`,
+        `'current', ../../storage/private/text/${fileName}.csv`,
         csvData + `\n`
       );
     } else {
@@ -20,11 +22,11 @@ export default (fileName, data) => {
         .map((val) => val)
         .join("; ");
       fs.writeFileSync(
-        `'current', ../../public/text/${fileName}.csv`,
+        `'current', ../../storage/private/text/${fileName}.csv`,
         headers + `\n` + csvData + `\n`
       );
     }
-    return { fileUrl: process.env.BASE_URL + `text/${fileName}.csv` };
+    return { fileUrl: process.env.BASE_URL + `private/text/${fileName}.csv` };
   } catch (error) {
     throw new Error(error);
   }
