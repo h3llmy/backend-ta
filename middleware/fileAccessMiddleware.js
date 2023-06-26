@@ -9,7 +9,6 @@ export const publicFile = (req, res) => {
   if (!fs.existsSync(filePath)) {
     throw new CustomError(`File ${req.params.fileName} not found`, 404);
   }
-  res.header("Access-Control-Allow-Origin", "*");
   res.sendFile(path.resolve(filePath));
 };
 
@@ -42,6 +41,5 @@ export const privateFile = async (req, res) => {
       throw new CustomError("Forbidden", 403);
     }
   }
-  res.header("Access-Control-Allow-Origin", "*");
   res.sendFile(path.resolve(filePath));
 };

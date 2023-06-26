@@ -32,6 +32,10 @@ app.use(fileUpload(), (req, res, next) => {
 });
 app.use(express.json());
 app.use(auth);
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
 app.get("/public/:mimeType/:fileName", publicFile);
 app.get("/private/:mimeType/:fileName", privateFile);
 // app.use(express.static("public"));
