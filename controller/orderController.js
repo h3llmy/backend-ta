@@ -375,7 +375,7 @@ export const createReport = async (req, res) => {
     res.json(successResponse(report));
     setTimeout(() => {
       deleteFile(report.fileUrl);
-    }, 3000);
+    }, 300000);
   });
 };
 
