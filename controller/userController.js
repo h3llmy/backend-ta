@@ -91,12 +91,14 @@ export const userCollections = async (req, res) => {
       ],
     };
   }
+
+  const { limit, skip } = paginations(req.query);
   const userFind = await User.findOne({ _id: req.auth._id, isActive: true })
     .select("collections")
     .populate({
       path: "collections",
       match: filters,
-      options: paginations(req.query),
+      options: { limit, skip, sort: { createdAt: "desc" } },
     })
     .orFail(new CustomError("user not found", 404));
 
