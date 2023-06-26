@@ -52,6 +52,10 @@ const orderSchema = new mongoose.Schema(
     deadline: {
       type: Date,
     },
+    dayWork: {
+      type: Number,
+      required: true,
+    },
     discount: {
       discountId: {
         type: String,

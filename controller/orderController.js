@@ -55,6 +55,7 @@ export const add = async (req, res) => {
       productName: productFind.name,
       productCategoryId: productFind.category._id,
       productCategory: productFind.category.name,
+      dayWork: productFind.dayWork,
       note: req.body.note,
       price: price,
       maxRevision: productFind.maxRevision,
@@ -538,10 +539,10 @@ export const updateProgress = async (req, res) => {
 
   const currentDate = new Date();
   const deadlineDate = new Date();
-  deadlineDate.setDate(currentDate.getDate() + 40);
+  deadlineDate.setDate(currentDate.getDate() + orderFind.dayWork);
 
   orderFind.orderStatus = "progress";
-  orderFind.status.progress = new Date();
+  orderFind.status.progress = currentDate;
   orderFind.deadline = deadlineDate;
   await orderFind.save();
   res.json(successResponse(orderFind));

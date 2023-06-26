@@ -76,7 +76,7 @@ export const saveFile = (file) => {
   try {
     const directory = `${file.filePath.split("/")[3]}/${file.mimeType}`;
     if (!fs.existsSync(`storage/${directory}`)) {
-      fs.mkdirSync(directory, { recursive: true });
+      fs.mkdirSync(`storage/${directory}`, { recursive: true });
     }
     file.file.mv(`storage/${directory}/${file.fileName}`);
   } catch (error) {
