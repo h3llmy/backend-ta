@@ -3,5 +3,7 @@ node_modules
 
 storage
 
+dist
+
 .env
 app.log
