@@ -16,7 +16,7 @@
     "test": "jest --watchAll --detectOpenHandles",
     "start": "pm2 start ecosystem.config.json --no-daemon",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "obfuscate": "javascript-obfuscator -o dist --exclude='node_modules,vendor/costomCommand,test,faker'",
+    "build": "javascript-obfuscator -o dist --exclude='node_modules,vendor/costomCommand,test,faker'",
     "create:controller": "node ./vendor/costomCommand/createController.js",
     "create:model": "node ./vendor/costomCommand/createModel.js",
     "create:route": "node ./vendor/costomCommand/createRoute.js",
