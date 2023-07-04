@@ -13,6 +13,7 @@ import { generatePayment, updatePayment } from "../service/paymentMidtrans.js";
 import mongoose from "mongoose";
 import Collection from "../model/collectionModel.js";
 import Categories from "../model/categoriesModel.js";
+import pdf from "html-pdf";
 
 export const add = async (req, res) => {
   validate(req.body, {
@@ -302,7 +303,143 @@ export const detail = async (req, res) => {
   res.json(successResponse(orderFind));
 };
 
-export const createReport = async (req, res) => {
+export const createReportPdf = async (req, res) => {
+  validate(req.body, {
+    from: { type: Date },
+    until: { type: Date },
+  });
+
+  let filter = { orderStatus: "done" };
+  if (req.body.from || req.body.until) {
+    const fromDate = req.body.from ? new Date(req.body.from) : null;
+    const untilDate = req.body.until ? new Date(req.body.until) : null;
+
+    if (fromDate && untilDate && fromDate > untilDate) {
+      throw new CustomError("Error validations", 400, {
+        from: "From date cannot be greater than until date",
+      });
+    }
+
+    if (fromDate && fromDate > new Date()) {
+      throw new CustomError("Error validations", 400, {
+        from: "From date cannot be greater than today",
+      });
+    }
+
+    const dateFilter = {};
+
+    if (fromDate) {
+      dateFilter["$gte"] = fromDate;
+    }
+
+    if (untilDate) {
+      dateFilter["$lte"] = untilDate;
+    }
+
+    filter = {
+      ...filter,
+      "status.done": dateFilter,
+    };
+  }
+
+  const fileName = "report-" + Date.now();
+
+  const orders = await Order.find(filter).populate("customer");
+
+  const tableHeaders = [
+    "No",
+    "Customer",
+    "Product Name",
+    "Product Category",
+    "Discount Name",
+    "Discount Percentage",
+    "Order Date",
+    "Price",
+  ];
+
+  let htmlContent = `
+    <div style="text-align: center;">
+      <h1>Order Report</h1>
+      <table style="border-collapse: collapse; margin: 0 auto;">
+        <tr>
+  `;
+
+  tableHeaders.forEach((header) => {
+    htmlContent += `
+          <th style="border: 1px solid black; padding: 5px;">${header}</th>
+    `;
+  });
+
+  htmlContent += `
+        </tr>
+  `;
+
+  let totalIncome = 0;
+
+  orders.forEach((order, index) => {
+    const rowData = {
+      No: index + 1,
+      Customer: order.customer.username,
+      "Product Name": order.productName,
+      "Product Category": order.productCategory,
+      "Discount Name": order.discount.name || "",
+      "Discount Percentage": order.discount.percentage || "",
+      "Order Date": order.createdAt.toDateString(),
+      Price: order.price,
+    };
+
+    totalIncome += order.price;
+
+    htmlContent += `
+        <tr>
+    `;
+
+    tableHeaders.forEach((header) => {
+      htmlContent += `
+          <td style="border: 1px solid black; padding: 5px;">${rowData[header]}</td>
+      `;
+    });
+
+    htmlContent += `
+        </tr>
+    `;
+  });
+
+  htmlContent += `
+      <tr>
+        <td colspan="${
+          tableHeaders.length - 1
+        }" style="text-align: center; font-weight: bold; padding: 5px; border: 1px solid black;">Total Income:</td>
+        <td style="border: 1px solid black; padding: 5px;">${totalIncome}</td>
+      </tr>
+    </table>
+    </div>
+    `;
+
+  const options = { format: "Letter" };
+
+  const filePath = `storage/private/text/${fileName}.pdf`;
+
+  pdf.create(htmlContent, options).toFile(filePath, (err, _) => {
+    if (err) {
+      throw new Error("Error creating PDF");
+    }
+
+    const fileUrl = `${process.env.BASE_URL}private/text/${fileName}.pdf`;
+
+    res.json(
+      successResponse({
+        fileUrl,
+      })
+    );
+
+    setTimeout(() => {
+      deleteFile(fileUrl);
+    }, 300000);
+  });
+};
+
+export const createReportCsv = async (req, res) => {
   validate(req.body, {
     from: { type: Date },
     until: { type: Date },
