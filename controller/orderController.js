@@ -357,64 +357,52 @@ export const createReportPdf = async (req, res) => {
     "Price",
   ];
 
-  let htmlContent = `
+  const rows = orders.map((order, index) => ({
+    No: index + 1,
+    Customer: order.customer.username,
+    "Product Name": order.productName,
+    "Product Category": order.productCategory,
+    "Discount Name": order.discount.name || "",
+    "Discount Percentage": order.discount.percentage || "",
+    "Order Date": order.createdAt.toDateString(),
+    Price: order.price,
+  }));
+
+  const totalIncome = orders.reduce((sum, order) => sum + order.price, 0);
+
+  const tableData = rows
+    .map((row) =>
+      tableHeaders
+        .map(
+          (header) =>
+            `<td style="border: 1px solid black; padding: 5px;">${row[header]}</td>`
+        )
+        .join("")
+    )
+    .join("</tr><tr>");
+
+  const htmlContent = `
     <div style="text-align: center;">
       <h1>Order Report</h1>
       <table style="border-collapse: collapse; margin: 0 auto;">
         <tr>
-  `;
-
-  tableHeaders.forEach((header) => {
-    htmlContent += `
-          <th style="border: 1px solid black; padding: 5px;">${header}</th>
-    `;
-  });
-
-  htmlContent += `
+          ${tableHeaders
+            .map(
+              (header) =>
+                `<th style="border: 1px solid black; padding: 5px;">${header}</th>`
+            )
+            .join("")}
         </tr>
-  `;
-
-  let totalIncome = 0;
-
-  orders.forEach((order, index) => {
-    const rowData = {
-      No: index + 1,
-      Customer: order.customer.username,
-      "Product Name": order.productName,
-      "Product Category": order.productCategory,
-      "Discount Name": order.discount.name || "",
-      "Discount Percentage": order.discount.percentage || "",
-      "Order Date": order.createdAt.toDateString(),
-      Price: order.price,
-    };
-
-    totalIncome += order.price;
-
-    htmlContent += `
+        <tr>${tableData}</tr>
         <tr>
-    `;
-
-    tableHeaders.forEach((header) => {
-      htmlContent += `
-          <td style="border: 1px solid black; padding: 5px;">${rowData[header]}</td>
-      `;
-    });
-
-    htmlContent += `
+          <td colspan="${
+            tableHeaders.length - 1
+          }" style="text-align: center; font-weight: bold; padding: 5px; border: 1px solid black;">Total Income:</td>
+          <td style="border: 1px solid black; padding: 5px;">${totalIncome}</td>
         </tr>
-    `;
-  });
-
-  htmlContent += `
-      <tr>
-        <td colspan="${
-          tableHeaders.length - 1
-        }" style="text-align: center; font-weight: bold; padding: 5px; border: 1px solid black;">Total Income:</td>
-        <td style="border: 1px solid black; padding: 5px;">${totalIncome}</td>
-      </tr>
-    </table>
+      </table>
     </div>
-    `;
+  `;
 
   const options = { format: "Letter" };
 
@@ -427,11 +415,7 @@ export const createReportPdf = async (req, res) => {
 
     const fileUrl = `${process.env.BASE_URL}private/text/${fileName}.pdf`;
 
-    res.json(
-      successResponse({
-        fileUrl,
-      })
-    );
+    res.json(successResponse({ fileUrl }));
 
     setTimeout(() => {
       deleteFile(fileUrl);
