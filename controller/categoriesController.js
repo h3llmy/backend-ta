@@ -16,6 +16,12 @@ export const add = async (req, res) => {
 };
 
 export const list = async (req, res) => {
+  if (req.query.search) {
+    req.auth.filter = {
+      ...req.auth.filter,
+      name: { $regex: req.query.search, $options: "i" },
+    };
+  }
   const categoriesFind = await Categories.paginate(req.auth.filter, req.query);
 
   if (req.auth.status !== "admin") {
