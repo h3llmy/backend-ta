@@ -89,7 +89,6 @@ const orderSchema = new mongoose.Schema(
       paid: {
         type: Date,
       },
-      // admin
       progress: {
         type: Date,
       },
@@ -99,7 +98,6 @@ const orderSchema = new mongoose.Schema(
       accept: {
         type: Date,
       },
-      // admin
       done: {
         type: Date,
       },

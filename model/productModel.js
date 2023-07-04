@@ -20,7 +20,6 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     ],
-    // aplikasi, foto, video, audio
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: Categories,

@@ -106,11 +106,11 @@ export const update = async (req, res) => {
     }
   }
 
-  productFind.productUrl = productFileUrl.map((product) => product.filePath);
-
   productFind.productUrl.forEach((product) => {
     deleteFile(product);
   });
+
+  productFind.productUrl = productFileUrl.map((product) => product.filePath);
 
   productFind.name = req.body.name;
   productFind.price = req.body.price;
