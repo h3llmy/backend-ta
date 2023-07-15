@@ -13,7 +13,8 @@ import { generatePayment, updatePayment } from "../service/paymentMidtrans.js";
 import mongoose from "mongoose";
 import Collection from "../model/collectionModel.js";
 import Categories from "../model/categoriesModel.js";
-import pdf from "html-pdf";
+import puppeteer from "puppeteer";
+import fs from "fs";
 
 export const add = async (req, res) => {
   validate(req.body, {
@@ -404,23 +405,25 @@ export const createReportPdf = async (req, res) => {
     </div>
   `;
 
-  const options = { format: "Letter" };
+  const browser = await puppeteer.launch({ headless: "new" });
+  const page = await browser.newPage();
+
+  await page.setContent(htmlContent);
+  const pdfBuffer = await page.pdf({ format: "A4" });
+
+  await browser.close();
 
   const filePath = `storage/private/text/${fileName}.pdf`;
 
-  pdf.create(htmlContent, options).toFile(filePath, (err, _) => {
-    if (err) {
-      throw new Error("Error creating PDF");
-    }
+  fs.writeFileSync(filePath, pdfBuffer);
 
-    const fileUrl = `${process.env.BASE_URL}private/text/${fileName}.pdf`;
+  const fileUrl = `${process.env.BASE_URL}private/text/${fileName}.pdf`;
 
-    res.json(successResponse({ fileUrl }));
+  res.json(successResponse({ fileUrl }));
 
-    setTimeout(() => {
-      deleteFile(fileUrl);
-    }, 300000);
-  });
+  setTimeout(() => {
+    deleteFile(fileUrl);
+  }, 300000);
 };
 
 export const createReportCsv = async (req, res) => {
