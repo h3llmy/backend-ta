@@ -11,10 +11,10 @@ export default (fileName, data) => {
       fs.mkdirSync(`storage/private/text`, { recursive: true });
     }
     if (
-      fs.existsSync(`'current', ../../storage/private/text/${fileName}.csv`)
+      fs.existsSync(`storage/private/text/${fileName}.csv`)
     ) {
       fs.appendFileSync(
-        `'current', ../../storage/private/text/${fileName}.csv`,
+        `storage/private/text/${fileName}.csv`,
         csvData + `\n`
       );
     } else {
@@ -22,7 +22,7 @@ export default (fileName, data) => {
         .map((val) => val)
         .join("; ");
       fs.writeFileSync(
-        `'current', ../../storage/private/text/${fileName}.csv`,
+        `storage/private/text/${fileName}.csv`,
         headers + `\n` + csvData + `\n`
       );
     }
