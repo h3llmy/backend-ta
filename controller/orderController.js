@@ -84,6 +84,18 @@ export const add = async (req, res) => {
     };
 
     const payment = await generatePayment(paymentPayload);
+    const emailHeader = {
+      to: adminFind.email,
+      subject: "New Order",
+      html: {
+        title: "New Order",
+        orderId: newOrder._id,
+        productName: newOrder.productName,
+        orderStatus: newOrder.orderStatus,
+        price: newOrder.price,
+      },
+    };
+    sendMail(emailHeader, "orderDoneNotification.html");
     await session.commitTransaction();
     res.json(successResponse(payment));
   } catch (error) {
@@ -123,6 +135,7 @@ export const notification = async () => {
           customer: order.customer.username,
           productName: order.productName,
           orderStatus: order.orderStatus,
+          deadline: order.deadline,
         },
       };
       sendMail(emailHeader, "orderDeadline.html");
@@ -527,6 +540,19 @@ export const updateRevision = async (req, res) => {
   orderFind.status.revision = new Date();
   await orderFind.save();
 
+  const emailHeader = {
+    to: adminFind.email,
+    subject: "Order Revision",
+    html: {
+      title: "Revision Order",
+      orderId: orderFind._id,
+      productName: orderFind.productName,
+      orderStatus: orderFind.orderStatus,
+      price: orderFind.price,
+    },
+  };
+  sendMail(emailHeader, "orderDoneNotification.html");
+
   res.json(successResponse(orderFind, "Order updated"));
 };
 
@@ -576,6 +602,19 @@ export const updatePreview = async (req, res) => {
   const updateOrder = await orderFind.save();
 
   saveFile(file);
+
+  const emailHeader = {
+    to: adminFind.email,
+    subject: `Order ${orderFind.orderStatus}`,
+    html: {
+      title: `Order ${orderFind.orderStatus}`,
+      orderId: orderFind._id,
+      productName: orderFind.productName,
+      orderStatus: orderFind.orderStatus,
+      price: orderFind.price,
+    },
+  };
+  sendMail(emailHeader, "orderDoneNotification.html");
 
   res.json(successResponse(updateOrder, "Preview uploaded"));
 };
@@ -628,6 +667,20 @@ export const updateDone = async (req, res) => {
     user.collections.push(newCollection._id);
     await user.save();
     saveFile(file);
+
+    const emailHeader = {
+      to: adminFind.email,
+      subject: "Order Done",
+      html: {
+        title: "Order Done",
+        orderId: orderFind._id,
+        productName: orderFind.productName,
+        orderStatus: orderFind.orderStatus,
+        price: orderFind.price,
+      },
+    };
+    sendMail(emailHeader, "orderDoneNotification.html");
+
     await session.commitTransaction();
     res.json(successResponse(orderFind));
   } catch (error) {
@@ -653,6 +706,20 @@ export const updateAccept = async (req, res) => {
   orderFind.status.accept = new Date();
 
   const updateOrder = await orderFind.save();
+
+  const emailHeader = {
+    to: adminFind.email,
+    subject: "Order Accepted",
+    html: {
+      title: "Order Accepted",
+      orderId: orderFind._id,
+      productName: orderFind.productName,
+      orderStatus: orderFind.orderStatus,
+      price: orderFind.price,
+    },
+  };
+  sendMail(emailHeader, "orderDoneNotification.html");
+
   res.json(successResponse(updateOrder, "Order updated"));
 };
 
@@ -669,6 +736,21 @@ export const updateProgress = async (req, res) => {
   orderFind.status.progress = currentDate;
   orderFind.deadline = deadlineDate;
   await orderFind.save();
+
+  const emailHeader = {
+    to: adminFind.email,
+    subject: "Order Done",
+    html: {
+      title: "Order Done",
+      orderId: orderFind._id,
+      productName: orderFind.productName,
+      orderStatus: orderFind.orderStatus,
+      price: orderFind.price,
+      deadline: orderFind.deadline,
+    },
+  };
+  sendMail(emailHeader, "orderNotification.html");
+
   res.json(successResponse(orderFind));
 };
 
