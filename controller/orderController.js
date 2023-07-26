@@ -83,6 +83,7 @@ export const add = async (req, res) => {
       ],
     };
 
+    const adminFind = await User.findOne({ status: "admin" });
     const payment = await generatePayment(paymentPayload);
     const emailHeader = {
       to: adminFind.email,
@@ -540,6 +541,7 @@ export const updateRevision = async (req, res) => {
   orderFind.status.revision = new Date();
   await orderFind.save();
 
+  const adminFind = await User.findOne({ status: "admin" });
   const emailHeader = {
     to: adminFind.email,
     subject: "Order Revision",
@@ -602,6 +604,8 @@ export const updatePreview = async (req, res) => {
   const updateOrder = await orderFind.save();
 
   saveFile(file);
+
+  const adminFind = await User.findOne({ status: "admin" });
 
   const emailHeader = {
     to: adminFind.email,
@@ -668,6 +672,8 @@ export const updateDone = async (req, res) => {
     await user.save();
     saveFile(file);
 
+    const adminFind = await User.findOne({ status: "admin" });
+
     const emailHeader = {
       to: adminFind.email,
       subject: "Order Done",
@@ -707,6 +713,8 @@ export const updateAccept = async (req, res) => {
 
   const updateOrder = await orderFind.save();
 
+  const adminFind = await User.findOne({ status: "admin" });
+
   const emailHeader = {
     to: adminFind.email,
     subject: "Order Accepted",
@@ -736,6 +744,8 @@ export const updateProgress = async (req, res) => {
   orderFind.status.progress = currentDate;
   orderFind.deadline = deadlineDate;
   await orderFind.save();
+
+  const adminFind = await User.findOne({ status: "admin" });
 
   const emailHeader = {
     to: adminFind.email,
