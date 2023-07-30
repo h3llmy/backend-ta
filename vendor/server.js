@@ -8,6 +8,7 @@ import { auth, protect } from "../middleware/authMiddleware.js";
 import rateLimiterMiddleware from "../middleware/rateLimiterMiddleware.js";
 import ExpressMongoSanitize from "express-mongo-sanitize";
 import { privateFile, publicFile } from "../middleware/fileAccessMiddleware.js";
+import corsMiddeware from "../middleware/corsMiddleware.js";
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.get("/public/:mimeType/:fileName", publicFile);
 app.get("/private/:mimeType/:fileName", privateFile);
 // app.use(express.static("public"));
 app.use(ExpressMongoSanitize());
+app.use(corsMiddeware);
 app.use(rateLimiterMiddleware);
 
 app.use("/api/v1", router);
