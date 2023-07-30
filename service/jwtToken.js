@@ -1,13 +1,10 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
 
 export const generateToken = (payload, expiresIn) => {
   try {
-    return process.env.ACCESS_TOKEN_SECRET;
-    // return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-    //   expiresIn: expiresIn,
-    // });
+    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: expiresIn,
+    });
   } catch (error) {
     throw new Error(error);
   }
