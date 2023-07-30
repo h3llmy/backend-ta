@@ -8,17 +8,12 @@ import compression from "compression";
 import { auth, protect } from "../middleware/authMiddleware.js";
 import rateLimiterMiddleware from "../middleware/rateLimiterMiddleware.js";
 import ExpressMongoSanitize from "express-mongo-sanitize";
-import morgan from "morgan";
-import fs from "fs";
 import { privateFile, publicFile } from "../middleware/fileAccessMiddleware.js";
 
 const app = express();
 
-const accessLogStream = fs.createWriteStream("app.log", { flags: "a" });
-
 app.use(express.urlencoded({ extended: false }));
 app.use(compression());
-app.use(morgan("combined", { stream: accessLogStream }));
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
