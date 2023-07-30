@@ -13,11 +13,11 @@ const app = express();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(compression());
-app.use(
-  helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-  })
-);
+// app.use(
+//   helmet({
+//     crossOriginResourcePolicy: { policy: "cross-origin" },
+//   })
+// );
 app.use(fileUpload(), (req, res, next) => {
   if (!req.files) {
     req.files = {};
