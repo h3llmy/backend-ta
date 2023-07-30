@@ -14,7 +14,7 @@
   "license": "ISC",
   "scripts": {
     "test": "jest --watchAll --detectOpenHandles",
-    "start": "node index.js",
+    "start": "pm2 start ecosystem.config.json --no-daemon",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "build": "javascript-obfuscator -o dist --exclude='node_modules,vendor/costomCommand,test,faker'",
     "create:controller": "node ./vendor/costomCommand/createController.js",
@@ -42,6 +42,7 @@
     "morgan": "^1.10.0",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.3",
+    "pm2": "^5.3.0",
     "puppeteer": "^20.8.2",
     "redis": "^4.6.7"
   },
