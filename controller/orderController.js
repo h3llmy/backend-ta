@@ -83,10 +83,10 @@ export const add = async (req, res) => {
       ],
     };
 
-    const adminFind = await User.findOne({ status: "admin" });
+    const userFind = await User.findOne({ _id: req.auth._id });
     const payment = await generatePayment(paymentPayload);
     const emailHeader = {
-      to: adminFind.email,
+      to: userFind.email,
       subject: "New Order",
       html: {
         title: "New Order",
@@ -541,9 +541,9 @@ export const updateRevision = async (req, res) => {
   orderFind.status.revision = new Date();
   await orderFind.save();
 
-  const adminFind = await User.findOne({ status: "admin" });
+  const userFind = await User.findOne({ _id: req.auth._id });
   const emailHeader = {
-    to: adminFind.email,
+    to: userFind.email,
     subject: "Order Revision",
     html: {
       title: "Revision Order",
@@ -605,10 +605,10 @@ export const updatePreview = async (req, res) => {
 
   saveFile(file);
 
-  const adminFind = await User.findOne({ status: "admin" });
+  const userFind = await User.findOne({ _id: orderFind.customer._id });
 
   const emailHeader = {
-    to: adminFind.email,
+    to: userFind.email,
     subject: `Order ${orderFind.orderStatus}`,
     html: {
       title: `Order ${orderFind.orderStatus}`,
@@ -672,10 +672,10 @@ export const updateDone = async (req, res) => {
     await user.save();
     saveFile(file);
 
-    const adminFind = await User.findOne({ status: "admin" });
+    const userFind = await User.findOne({ _id: orderFind.customer._id });
 
     const emailHeader = {
-      to: adminFind.email,
+      to: userFind.email,
       subject: "Order Done",
       html: {
         title: "Order Done",
@@ -713,10 +713,10 @@ export const updateAccept = async (req, res) => {
 
   const updateOrder = await orderFind.save();
 
-  const adminFind = await User.findOne({ status: "admin" });
+  const userFind = await User.findOne({ _id: req.auth._id });
 
   const emailHeader = {
-    to: adminFind.email,
+    to: userFind.email,
     subject: "Order Accepted",
     html: {
       title: "Order Accepted",
@@ -734,7 +734,7 @@ export const updateAccept = async (req, res) => {
 export const updateProgress = async (req, res) => {
   const orderFind = await Order.findOne({
     _id: req.params.order_id,
-  });
+  }).orFail(new CustomError("Order not found", 404));
 
   const currentDate = new Date();
   const deadlineDate = new Date();
@@ -745,10 +745,10 @@ export const updateProgress = async (req, res) => {
   orderFind.deadline = deadlineDate;
   await orderFind.save();
 
-  const adminFind = await User.findOne({ status: "admin" });
+  const userFind = await User.findOne({ _id: orderFind.customer._id });
 
   const emailHeader = {
-    to: adminFind.email,
+    to: userFind.email,
     subject: "Order Done",
     html: {
       title: "Order Done",
