@@ -2,7 +2,6 @@ import express from "express";
 import router from "../route/route.js";
 import fileUpload from "express-fileupload";
 import helmet from "helmet";
-import corsMiddleware from "../middleware/corsMiddleware.js";
 import { errorHanddlerMiddleware } from "../middleware/errorHanddlerMiddleware.js";
 import compression from "compression";
 import { auth, protect } from "../middleware/authMiddleware.js";
@@ -35,7 +34,6 @@ app.get("/public/:mimeType/:fileName", publicFile);
 app.get("/private/:mimeType/:fileName", privateFile);
 // app.use(express.static("public"));
 app.use(ExpressMongoSanitize());
-app.use(corsMiddleware);
 app.use(rateLimiterMiddleware);
 
 app.use("/api/v1", router);
