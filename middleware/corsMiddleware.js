@@ -14,4 +14,18 @@ if (!appOrigin || appOrigin == "" || appOrigin.length <= 0) {
   console.log("\x1b[34m%s\x1b[0m", "allowed origin : ", appOrigin);
 }
 
-export default cors();
+export default cors({
+  origin: function (origin, callback) {
+    if (!appOrigin) return callback(null, true);
+    if (appOrigin.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(
+        new CustomError(
+          "The CORS policy for this site does not allow access from this Origin.Not allowed by CORS",
+          403
+        )
+      );
+    }
+  },
+});
