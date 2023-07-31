@@ -15,6 +15,7 @@ import Collection from "../model/collectionModel.js";
 import Categories from "../model/categoriesModel.js";
 import puppeteer from "puppeteer";
 import fs from "fs";
+import { dateConvert } from "../vendor/dateConvert.js";
 
 export const add = async (req, res) => {
   validate(req.body, {
@@ -398,7 +399,14 @@ export const createReportPdf = async (req, res) => {
 
   const htmlContent = `
     <div style="text-align: center;">
-      <h1>Order Report</h1>
+    <div style="display: flex">
+      <img width="30" src="https://flowbite.com/docs/images/logo.svg" title="logo" alt="logo"/>
+      <h4>PT Semua Aplikasi Indonesia</h4>
+    </div>
+      <h3>Order Report</h3>
+      <h5>Periode: ${
+        req.body.from ? dateConvert(new Date(req.body.from)) : "start - "
+      }${req.body.until ? dateConvert(new Date(req.body.until)) : "end"}</h5>
       <table style="border-collapse: collapse; margin: 0 auto;">
         <tr>
           ${tableHeaders
